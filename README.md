@@ -35,9 +35,177 @@ STEP-5: Display the obtained cipher text.
 
 
 Program:
+```
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
+char matrix[5][5];
+
+void generateMatrix(char key[])
+{
+int used[26] = {0};
+int k = 0;
+char ch;
+
+used['J' - 'A'] = 1;
+
+for (int i = 0; key[i] != '\0'; i++)
+{
+    ch = toupper((unsigned char)key[i]);
+
+    if (ch < 'A' || ch > 'Z')
+        continue;
+
+    if (ch == 'J')
+        ch = 'I';
+
+    if (!used[ch - 'A'])
+    {
+        matrix[k / 5][k % 5] = ch;
+        used[ch - 'A'] = 1;
+        k++;
+    }
+}
+
+for (ch = 'A'; ch <= 'Z'; ch++)
+{
+    if (!used[ch - 'A'])
+    {
+        matrix[k / 5][k % 5] = ch;
+        k++;
+    }
+}
+
+}
+
+void findPosition(char ch, int *row, int *col)
+{
+if (ch == 'J')
+ch = 'I';
+
+
+for (int i = 0; i < 5; i++)
+{
+    for (int j = 0; j < 5; j++)
+    {
+        if (matrix[i][j] == ch)
+        {
+            *row = i;
+            *col = j;
+            return;
+        }
+    }
+}
+
+
+}
+
+void encrypt(char text[])
+{
+char plain[500], a, b;
+int len = 0;
+
+
+for (int i = 0; text[i] != '\0'; i++)
+{
+    a = toupper((unsigned char)text[i]);
+
+    if (a >= 'A' && a <= 'Z')
+    {
+        if (a == 'J')
+            a = 'I';
+
+        plain[len++] = a;
+    }
+}
+
+printf("Encrypted Text: ");
+
+for (int i = 0; i < len;)
+{
+    a = plain[i++];
+
+    if (i < len && plain[i] != a)
+        b = plain[i++];
+    else
+        b = 'X';
+
+    int r1, c1, r2, c2;
+
+    findPosition(a, &r1, &c1);
+    findPosition(b, &r2, &c2);
+
+    if (r1 == r2)
+    {
+        printf("%c%c",
+               matrix[r1][(c1 + 1) % 5],
+               matrix[r2][(c2 + 1) % 5]);
+    }
+    else if (c1 == c2)
+    {
+        printf("%c%c",
+               matrix[(r1 + 1) % 5][c1],
+               matrix[(r2 + 1) % 5][c2]);
+    }
+    else
+    {
+        printf("%c%c",
+               matrix[r1][c2],
+               matrix[r2][c1]);
+    }
+}
+
+printf("\n");
+
+
+}
+
+int main()
+{
+char key[100], text[500];
+
+
+printf("Enter the keyword: ");
+fgets(key, sizeof(key), stdin);
+
+printf("Enter the plaintext: ");
+fgets(text, sizeof(text), stdin);
+
+generateMatrix(key);
+
+printf("\nKey Matrix:\n");
+
+for (int i = 0; i < 5; i++)
+{
+    for (int j = 0; j < 5; j++)
+        printf("%c ", matrix[i][j]);
+
+    printf("\n");
+}
+
+encrypt(text);
+
+return 0;
+
+
+}
+
+```
 
 
 
 
 Output:
+
+
+<img width="322" height="297" alt="image" src="https://github.com/user-attachments/assets/c11fcff3-eba3-4037-ad1f-8db696da7c05" />
+
+
+
+
+Result:
+
+
+
+thus the above program is executed and the output is verified
